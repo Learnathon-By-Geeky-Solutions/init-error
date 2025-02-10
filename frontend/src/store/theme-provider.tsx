@@ -35,8 +35,6 @@ export const applyTheme = (theme: Theme): Theme => {
 
   root.classList.remove("light", "dark");
 
-  console.log("currentTheme", currentTheme);
-
   if (currentTheme === "system") {
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
       .matches
