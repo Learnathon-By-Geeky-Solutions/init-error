@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from 'dotenv';
-//import userRouter from './routes/auth-route'
+import userRouter from './routes/auth-route'
 dotenv.config();
 
 const app = express();
@@ -14,13 +14,13 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"], // Allow these origins
-    credentials: true, // Allow cookies to be sent
+    origin: ["http://localhost:3000", "http://localhost:5173"], 
+    credentials: true, 
   })
 );
 
 // Mount user router
-//app.use('/api/auth', userRouter);
+app.use('/api/auth', userRouter);
 
 
 app.get('/', (req, res) => {
