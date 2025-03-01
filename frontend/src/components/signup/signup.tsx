@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import signUpIcon from "../../../public/sign-up.avif";
+import signUpIcon from "../../assets/sign-up.avif";
 import { Link } from "react-router-dom";
 const contactSchema = z.object({
   firstName: z
