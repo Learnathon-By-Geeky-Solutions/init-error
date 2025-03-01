@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import signInIcon from "../../../public/signin.avif";
+import signInIcon from "../../assets/signin.avif";
 import { Link } from "react-router-dom";
 const contactSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
