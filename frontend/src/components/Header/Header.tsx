@@ -8,7 +8,7 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
   // shadow-md dark:bg-gray-800 pb-2
   return (
-    <header className=" sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="px-4 py-3 flex justify-between items-center">
         {/* Left Side: Project Name */}
         <Link to="/" className="md:text-xl text-lg font-semibold font-serif">Project Sphere</Link>
