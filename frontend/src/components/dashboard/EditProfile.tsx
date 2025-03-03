@@ -1,7 +1,4 @@
-"use client";
-
 import type React from "react";
-
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import profile from "../../assets/My_photo.jpg";
 import { Button } from "@/components/ui/button";
