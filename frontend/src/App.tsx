@@ -20,7 +20,7 @@ function App() {
         <Route path="/account/profile" element={<UserAccount />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
   );
 }
