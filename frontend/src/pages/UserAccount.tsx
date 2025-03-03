@@ -5,6 +5,7 @@ import UserDetails from "@/components/dashboard/UserDetails";
 import EditProfile from "@/components/dashboard/EditProfile";
 import UserPassword from "@/components/dashboard/UserPassword";
 import { Button } from "@/components/ui/button";
+import SocialProfiles from "@/components/dashboard/SocialProfile";
 
 const UserAccount = () => {
   const [activeTab, setActiveTab] = useState("User Details");
@@ -75,7 +76,7 @@ const UserAccount = () => {
         {activeTab === "User Details" && <UserDetails />}
         {activeTab === "Edit Profile" && <EditProfile />}
         {activeTab === "Password" && <UserPassword />}
-        
+        {activeTab === "Social Profiles" && <SocialProfiles/>}
       </main>
     </div>
   );
