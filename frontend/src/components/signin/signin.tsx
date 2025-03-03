@@ -1,33 +1,35 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import signInIcon from "../../assets/signin.avif";
-import { Link } from "react-router-dom";
-const contactSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-});
-
-type ContactValues = z.infer<typeof contactSchema>;
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "@/store/authstore";
+import { loginSchema, LoginValues } from "@/types/authschema";
 
 function Signin() {
-  const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
+  const isLoading = useAuthStore().loading;
+  const login = useAuthStore().login;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ContactValues>({
-    resolver: zodResolver(contactSchema),
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (values: ContactValues) => {
-    setIsLoading(true);
-    console.log("Form submitted:", values);
-    setTimeout(() => setIsLoading(false), 2000);
+  const onSubmit = async (values: LoginValues) => {
+    setErrorMessage(null);
+    console.log(values);
+
+    const response = await login(values);
+
+    if (response.status) {
+      navigate("/");
+    } else {
+      setErrorMessage(response.message);
+    }
   };
 
   return (
@@ -87,8 +89,11 @@ function Signin() {
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-md
                  hover:bg-blue-600 transition-colors disabled:opacity-50"
               >
-                {isLoading ? "Sending..." : "Sign in"}
+                {isLoading ? "Signing In..." : "Sign in"}
               </button>
+              {errorMessage && (
+                <p className="mt-1 text-sm text-red-500">{errorMessage}</p>
+              )}
               <div className="text-center">
                 <span className="text-sm text-white">
                   Don't have an account?{" "}

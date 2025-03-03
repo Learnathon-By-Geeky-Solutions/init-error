@@ -1,39 +1,34 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import signUpIcon from "../../assets/sign-up.avif";
-import { Link } from "react-router-dom";
-const contactSchema = z.object({
-  firstName: z
-    .string()
-    .min(2, { message: "firstName must be at least 2 characters" }),
-  lastName: z
-    .string()
-    .min(2, { message: "lastName must be at least 2 characters" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-});
-
-type ContactValues = z.infer<typeof contactSchema>;
+import signUpIcon from "@/assets/sign-up.avif";
+import { Link, useNavigate } from "react-router-dom";
+import { signupSchema, SignupValues } from "@/types/authschema";
+import useAuthStore from "@/store/authstore";
 
 function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useAuthStore().loading;
+  const signup = useAuthStore().signup;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ContactValues>({
-    resolver: zodResolver(contactSchema),
+  } = useForm<SignupValues>({
+    resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = (values: ContactValues) => {
-    setIsLoading(true);
-    console.log("Form submitted:", values);
-    setTimeout(() => setIsLoading(false), 2000);
+  const onSubmit = async (values: SignupValues) => {
+    setErrorMessage(null);
+    const response = await signup(values);
+
+    if (response.status) {
+      navigate("/signin");
+    } else {
+      setErrorMessage(response.message);
+    }
   };
 
   return (
@@ -144,8 +139,11 @@ function SignupPage() {
                 disabled={isLoading}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50"
               >
-                {isLoading ? "Sending..." : "Sign Up"}
+                {isLoading ? "Signing Up..." : "Sign Up"}
               </button>
+              {errorMessage && (
+                <p className="mt-1 text-sm text-red-500">{errorMessage}</p>
+              )}
               <div className="text-center">
                 <span className="text-sm text-white">
                   Already have an account?{" "}
