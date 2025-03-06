@@ -9,8 +9,10 @@ import { sendVerificationEmail } from "../utils/send-verification-email";
 import { generateVerificationCode } from "../utils/generate-verification-code";
 import { generateExpiryDate } from "../utils/generate-verification-code";
 import jwt from "jsonwebtoken";
+import { asyncHandler } from "../utils/asyncHandler";
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = asyncHandler(
+  async (req: Request, res: Response) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -20,7 +22,7 @@ export const signup = async (req: Request, res: Response) => {
         (field) => !field || field.trim() === ""
       )
     ) {
-      res.status(400).json(new ApiResponse(400, {}, "All fields are required"));
+      return res.status(400).json(new ApiResponse(400, {}, "All fields are required"));
     }
 
     // Check if the user already exists by email
@@ -45,6 +47,8 @@ export const signup = async (req: Request, res: Response) => {
           );
       }
 
+      
+
       // If the user is not verified, update their details
       await db
         .update(userTable)
@@ -66,9 +70,9 @@ export const signup = async (req: Request, res: Response) => {
         res
           .status(500)
           .json(new ApiResponse(500, {}, "Failed to send verification email"));
-      }
+      } 
 
-      res
+      return res
         .status(200)
         .json(
           new ApiResponse(
@@ -101,17 +105,17 @@ export const signup = async (req: Request, res: Response) => {
     );
 
     if (!emailResponse.success) {
-      res
+      return res
         .status(500)
         .json(new ApiResponse(500, {}, "Failed to send verification email"));
-    }
+    } 
 
-    res
+    return res
       .status(201)
       .json(
         new ApiResponse(
           201,
-          { email, firstName },
+          { newUser },
           "User registered successfully. Please verify your email."
         )
       );
@@ -119,16 +123,17 @@ export const signup = async (req: Request, res: Response) => {
     console.error("Error during signup:", error);
     res.status(500).json(new ApiResponse(500, null, "Internal server error"));
   }
-};
+});
 
 
 
-export const login = async (req: Request, res: Response) => {
+export const login = asyncHandler(
+  async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     if ([email, password].some((field) => !field || field.trim() === "")) {
-      res
+      return res
         .status(400)
         .json(new ApiResponse(400, {}, "Email and password are required"));
     }
@@ -139,7 +144,7 @@ export const login = async (req: Request, res: Response) => {
       .where(eq(userTable.email, email));
 
     if (!user || !user[0].isVerified) {
-      res
+      return res
         .status(404)
         .json(new ApiResponse(404, {}, "User not found or Not Verified"));
     }
@@ -147,7 +152,7 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(password, user[0].password);
 
     if (!isPasswordValid) {
-      res.status(401).json(new ApiResponse(401, {}, "Invalid credentials"));
+      return res.status(401).json(new ApiResponse(401, {}, "Invalid credentials"));
     }
 
     let accessToken;
@@ -159,7 +164,7 @@ export const login = async (req: Request, res: Response) => {
       );
     } catch (jwtError) {
       console.error("JWT Error:", jwtError);
-      res
+      return res
         .status(500)
         .json(new ApiResponse(500, null, "Failed to generate token"));
     }
@@ -174,35 +179,35 @@ export const login = async (req: Request, res: Response) => {
 
     const loginUser = user[0];
 
-    res.status(200).json({
+    return res.status(200).json({
       data: loginUser,
+      accessToken: accessToken,
       message: "Login successful",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json(new ApiResponse(500, null, "Internal server error"));
+    return res.status(500).json(new ApiResponse(500, null, "Internal server error"));
   }
-};
+});
 
-export const logout = async (req: Request, res: Response) => {
+export const logout = asyncHandler(
+  async (req: Request, res: Response) => {
   try {
     if (!req.user) {
-      res.status(401).json(new ApiResponse(401, {}, "Unauthorized request"));
+      return res.status(401).json(new ApiResponse(401, {}, "Unauthorized request"));
     }
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: false, // Set to true if using HTTPS in production
       sameSite: "strict",
     });
-  
-  
-    res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
+
+    return res.status(200).json(new ApiResponse(200, {}, "Logout successful"));
   } catch (error) {
     console.log(error);
-    res.status(500).json(new ApiResponse(500, null, "Internal server error"));
+    return res.status(500).json(new ApiResponse(500, null, "Internal server error"));
   }
-}
-
+});
 
 export const verifyEmail = async (req: Request, res: Response) => {
   try {

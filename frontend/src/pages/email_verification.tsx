@@ -105,6 +105,7 @@ export function OTPVerification() {
   };
 
   return (
+    <div className="min-h-screen py-32">
     <Card className="w-full max-w-md mx-auto dark:bg-gray-800 dark:text-white">
       <CardHeader>
         <div className="flex justify-center mb-4">
@@ -190,5 +191,6 @@ export function OTPVerification() {
         </Button>
       </CardFooter>
     </Card>
+    </div>
   );
 }
