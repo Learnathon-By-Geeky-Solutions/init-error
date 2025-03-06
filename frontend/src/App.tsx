@@ -7,6 +7,9 @@ import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import Dashboard from "./pages/DashBoard";
 import UserAccount from "./pages/UserAccount";
+import { OTPVerification } from "./pages/email_verification";
+
+
 
 function App() {
   return (
@@ -17,6 +20,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/verification" element={<OTPVerification/>} />
         <Route path="/account/profile" element={<UserAccount />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
