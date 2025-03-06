@@ -1,8 +1,14 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import useAuthStore from "@/store/authstore";
 import { Link } from "react-router-dom";
 
 const UserCard = () => {
+  const user = useAuthStore((state) => state.getLoggedInUser());
+
+  
+
+
   return (
     <div className="flex flex-col items-center p-6  w-full max-w-lg mx-auto">
       {/* Avatar */}
@@ -13,7 +19,7 @@ const UserCard = () => {
       
       {/* User Info */}
       <div className="text-center w-full">
-        <h2 className="text-lg font-semibold">Welcome, John Doe</h2>
+        <h2 className="text-lg font-semibold">Welcome, {user?.firstName} {user?.lastName}</h2>
         
         {/* Edit Button */}
         <Button className="mt-3 w-[100px] rounded-lg dark:bg-slate-600" variant="outline"><Link to="/account/profile">Edit</Link></Button>

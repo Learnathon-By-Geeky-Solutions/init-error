@@ -1,150 +1,73 @@
 import { create } from "zustand";
 import { persist, devtools, createJSONStorage } from "zustand/middleware";
-import {
-  loginSchema,
-  LoginValues,
-  signupSchema,
-  SignupValues,
-} from "@/types/authschema";
-import { ApiResponse } from "@/types/api-success-type";
 
 export interface User {
-  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  name?: string;
+  bio: string | null;
+  password: string;
+  avatar: string | null;
+  socialLinks: string | null;
+  verifyCode: string;
+  verifyCodeExpiry: string;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface AuthState {
   user: User | null;
+  accessToken: string | null;
   isAuthenticated: boolean;
-  loading: boolean;
-  signup: (
-    userData: SignupValues
-  ) => Promise<{ status: boolean; message: string }>;
-  login: (
-    credentials: LoginValues
-  ) => Promise<{ status: boolean; message: string }>;
-  logout: () => Promise<{ status: boolean; message: string }>;
+  isLoading: boolean;
+  error: string | null;
+  login: (user: User, accessToken: string) => void;
+  logout: () => void;
+  setUser: (user: User) => void;
+  setAccessToken: (token: string) => void;
+  getLoggedInUser: () => User | null; // Getter for logged-in user
 }
 
 const useAuthStore = create<AuthState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         user: null,
+        accessToken: null,
         isAuthenticated: false,
-        loading: false,
-        // Signup action
-        signup: async (userData) => {
-          try {
-            set({ loading: true });
-            // Validate the input data using the signupSchema
-            const validatedData = signupSchema.parse(userData);
-
-            // Simulate an API call for signup
-            const response = await fetch(
-              `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(validatedData),
-              }
-            );
-            set({ loading: false });
-            if (response.ok) {
-              return { status: true, message: "Signup successfull" }; // Signup successful
-            } else {
-              const data = (await response.json()) as ApiResponse;
-              throw new Error(data.message || "Signup failed");
-            }
-          } catch (error) {
-            set({ loading: false });
-            let message;
-            if (error instanceof Error) {
-              message = error.message;
-            }
-            console.error("Signup error:", error);
-            return {
-              status: false,
-              message: message || "Signup failed",
-            }; // Signup failed
-          }
+        isLoading: false,
+        error: null,
+        login: (user, accessToken) => {
+          set({
+            user,
+            accessToken,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
         },
-
-        // Login action
-        login: async (credentials) => {
-          try {
-            set({ loading: true });
-            const validatedData = loginSchema.parse(credentials);
-
-            // Simulate an API call for login
-            const response = await fetch(
-              `${import.meta.env.VITE_API_BASE_URL}/api/auth/signin`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(validatedData),
-              }
-            );
-            set({ loading: false });
-            const data = await response.json();
-
-            if (response.ok) {
-              set({ isAuthenticated: true, user: data.loginUser as User });
-              return { status: true, message: "Login sccessfull" };
-            } else {
-              throw new Error(data.message || "Login failed");
-            }
-          } catch (error) {
-            set({ loading: false });
-            let message;
-            if (error instanceof Error) {
-              message = error.message;
-            }
-            console.error("Login error:", error);
-            return {
-              status: false,
-              message: message || "Login failed",
-            }; // Login failed
-          }
+        logout: () => {
+          set({
+            user: null,
+            accessToken: null,
+            isAuthenticated: false,
+          });
         },
-
-        // Logout action
-        logout: async () => {
-          try {
-            set({ loading: true });
-            await fetch(
-              `${import.meta.env.VITE_API_BASE_URL}/api/auth/signout`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-            set({ loading: false, isAuthenticated: false, user: null });
-            return { status: true, message: "Logout successfull" };
-          } catch (error) {
-            set({ loading: false });
-            let message;
-            if (error instanceof Error) {
-              message = error.message;
-            }
-            console.error("Logout error:", error);
-            return {
-              status: false,
-              message: message || "Logout failed",
-            }; // Logout failed
-          }
+        setUser: (user) => {
+          set({ user });
+        },
+        setAccessToken: (token) => {
+          set({ accessToken: token });
+        },
+        getLoggedInUser: () => {
+          return get().user; // Return the current user from the state
         },
       }),
       {
-        name: "auth-storage", // Unique name for local storage
-        storage: createJSONStorage(() => localStorage), // Use localStorage
+        name: "auth-storage", // Name for persistence
+        storage: createJSONStorage(() => localStorage), // Using localStorage
       }
     )
   )

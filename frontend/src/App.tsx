@@ -1,15 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NotFound from "./components/not-found/NotFound";
-import Signin from "./components/signin/signin";
-import Signup from "./components/signup/signup";
 import HomePage from "./pages/Home";
 import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header";
 import Dashboard from "./pages/DashBoard";
 import UserAccount from "./pages/UserAccount";
+import Header from "./components/header/Header";
+import SignInPage from "./pages/SignIn";
+import SignupPage from "./pages/SignUp";
 import { OTPVerification } from "./pages/email_verification";
-
-
 
 function App() {
   return (
@@ -17,10 +15,10 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/verification" element={<OTPVerification/>} />
+        <Route path="/verify/:email" element={<OTPVerification/>} />
         <Route path="/account/profile" element={<UserAccount />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -14,8 +14,7 @@ export const signupSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
 });
 
-// TypeScript interface inferred from the Zod schema
-export type SignupValues = z.infer<typeof signupSchema>;
+
 
 export const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -24,4 +23,3 @@ export const loginSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
 });
 
-export type LoginValues = z.infer<typeof loginSchema>;
