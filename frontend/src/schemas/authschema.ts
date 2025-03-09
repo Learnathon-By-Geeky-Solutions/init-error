@@ -14,8 +14,6 @@ export const signupSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
 });
 
-
-
 export const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -23,3 +21,7 @@ export const loginSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
 });
 
+export const verifySchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  code: z.string().length(6, { message: "Code must be 6 characters" }),
+});
