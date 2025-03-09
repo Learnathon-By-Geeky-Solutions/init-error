@@ -8,6 +8,7 @@ import Header from "./components/Header/Header";
 import SignInPage from "./pages/SignIn";
 import SignupPage from "./pages/SignUp";
 import OTPVerification from "./pages/email_verification";
+import PrivateLayout from "./components/layout/PrivateLayout";
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/verify/:email" element={<OTPVerification />} />
-        <Route path="/account/profile" element={<UserAccount />} />
+        <Route element={<PrivateLayout />}>
+          <Route path="/account/profile" element={<UserAccount />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
