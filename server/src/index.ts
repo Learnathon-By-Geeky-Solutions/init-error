@@ -2,8 +2,9 @@ import express, { NextFunction, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routes/auth-route";
+import authRouter from "./routes/auth-route";
 import projectRouter from "./routes/projects-route";
+import userRouter from "./routes/users-route";
 dotenv.config();
 
 const app = express();
@@ -21,8 +22,9 @@ app.use(
 );
 
 // Mount user router
-app.use("/api/auth", userRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/projects", projectRouter);
+app.use("/api/users", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World");
