@@ -10,7 +10,7 @@ import { validateSocialLinks } from "../utils/sociallinks-regex";
 export const changePassword = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
 
       if (!userId) {
         return res
@@ -73,7 +73,7 @@ export const changePassword = asyncHandler(
 export const updateSocialLinks = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
 
       if (!userId) {
         return res
@@ -119,7 +119,7 @@ export const updateSocialLinks = asyncHandler(
 export const updateUserInfo = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      const userId = req.user?.userId;
+      const userId = req.user?.id;
 
       if (!userId) {
         return res
