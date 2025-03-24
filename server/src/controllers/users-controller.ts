@@ -115,3 +115,51 @@ export const updateSocialLinks = asyncHandler(
     }
   }
 );
+
+export const updateUserInfo = asyncHandler(
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res
+          .status(401)
+          .json(new ApiResponse(401, {}, "Unauthorized request"));
+      }
+
+      const { firstName, lastName, bio, avatar } = req.body;
+
+      if (
+        [firstName, lastName].some((field) => !field || field.trim() === "")
+      ) {
+        return res
+          .status(400)
+          .json(
+            new ApiResponse(400, {}, "First name and last name are required")
+          );
+      }
+
+      await db
+        .update(userTable)
+        .set({
+          firstName: firstName,
+          lastName: lastName,
+          bio: bio,
+          avatar:
+            avatar.trim() === ""
+              ? `https://ui-avatars.com/api/?name=${firstName}`
+              : avatar,
+        })
+        .where(eq(userTable.userId, userId));
+
+      return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "User info updated successfully"));
+    } catch (error) {
+      console.error("Error during user info update:", error);
+      return res
+        .status(500)
+        .json(new ApiResponse(500, null, "Internal server error"));
+    }
+  }
+);
