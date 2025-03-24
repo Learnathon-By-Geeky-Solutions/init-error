@@ -104,9 +104,19 @@ export const updateSocialLinks = asyncHandler(
         .set({ socialLinks })
         .where(eq(userTable.userId, userId));
 
+      const updatedUser = await db
+        .select()
+        .from(userTable)
+        .where(eq(userTable.userId, userId));
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Social links updated successfully"));
+        .json(
+          new ApiResponse(
+            200,
+            { user: updatedUser[0] ?? null },
+            "Social links updated successfully"
+          )
+        );
     } catch (error) {
       console.error("Error during social links update:", error);
       return res
@@ -124,7 +134,9 @@ export const updateUserInfo = asyncHandler(
       if (!userId) {
         return res
           .status(401)
-          .json(new ApiResponse(401, {}, "Unauthorized request"));
+          .json(
+            new ApiResponse(401, {}, "Unauthorized request in updateUserInfo")
+          );
       }
 
       const { firstName, lastName, bio, avatar } = req.body;
@@ -142,19 +154,29 @@ export const updateUserInfo = asyncHandler(
       await db
         .update(userTable)
         .set({
-          firstName: firstName,
-          lastName: lastName,
-          bio: bio,
+          firstName: firstName ?? "",
+          lastName: lastName ?? "",
+          bio: bio ?? "",
           avatar:
-            avatar.trim() === ""
+            avatar?.trim() === ""
               ? `https://ui-avatars.com/api/?name=${firstName}`
               : avatar,
         })
         .where(eq(userTable.userId, userId));
 
+      const updatedUser = await db
+        .select()
+        .from(userTable)
+        .where(eq(userTable.userId, userId));
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "User info updated successfully"));
+        .json(
+          new ApiResponse(
+            200,
+            { user: updatedUser[0] ?? null },
+            "User info updated successfully"
+          )
+        );
     } catch (error) {
       console.error("Error during user info update:", error);
       return res
